@@ -1,0 +1,5 @@
+﻿*.pyc
+__pycache__/
+checkpoint_*.json
+trained_stellschrauben.json
+upload_hf.py
