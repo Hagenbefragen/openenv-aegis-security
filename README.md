@@ -1,8 +1,29 @@
+---
+title: AEGIS Security RL Environment
+emoji: 🛡️
+colorFrom: blue
+colorTo: green
+sdk: static
+pinned: false
+---
+
 # AEGIS Security Environment — OpenEnv Hackathon SF 2026
 
 # The first RL environment where AI learns to defend itself.
 
-## 🔒 What is this?
+## �️ A.E.G.I.S.
+
+> **Auditable · Energy-efficient · Governance-ready · Integrity-first · Sovereign**
+
+|       |                      |                                                                     |
+| :---: | -------------------- | ------------------------------------------------------------------- |
+| **A** | **Auditable**        | Every step recorded. POAW cryptographic proof. EU AI Act compliant. |
+| **E** | **Energy-efficient** | Green AI — NPU-first, 90% token compression, planetary respect.     |
+| **G** | **Governance-ready** | ISO 42001, NIS2, 12-Sigma safety — built-in, not bolted-on.         |
+| **I** | **Integrity-first**  | 42-layer cascade, zero trust, the defense never sleeps.             |
+| **S** | **Sovereign**        | Self-hosted, your data never leaves, no cloud dependency.           |
+
+## �🔒 What is this?
 
 **AEGIS Security Environment** is an OpenEnv-compatible RL environment where an AI agent learns to optimize a 42-layer adversarial defense cascade. Unlike gaming environments (chess, Mario), this environment trains AI to **defend itself** against prompt injection, jailbreaks, and data exfiltration attacks.
 
