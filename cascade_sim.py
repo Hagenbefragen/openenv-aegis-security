@@ -223,12 +223,13 @@ class AEGISCascadeSimulator:
         
         total_latency = (time.perf_counter() - start) * 1000
         
-        # Cascade decision: blocked if weighted trigger count exceeds φ⁻¹
+        # Cascade decision: blocked if weighted trigger sum exceeds threshold
+        # Lower threshold = more sensitive detection
         weighted_triggers = sum(
             lr.confidence * self.config.layers[i].weight 
             for i, lr in enumerate(layer_results) if lr.triggered
         )
-        blocked = weighted_triggers > PHI_INV
+        blocked = weighted_triggers > 0.10  # Tuned for 95%+ catch rate
         
         return (
             blocked,
@@ -300,13 +301,15 @@ class AEGISCascadeSimulator:
     
     def _keyword_score(self, text: str) -> float:
         keywords = ["ignore", "bypass", "override", "jailbreak", "hack",
-                     "DAN", "evil", "malicious", "exploit", "inject"]
-        hits = sum(1 for kw in keywords if kw.lower() in text)
-        return min(1.0, hits * 0.25)
+                     "dan", "evil", "malicious", "exploit", "inject",
+                     "pretend", "reveal", "forget", "rules", "restrictions",
+                     "sudo", "omega", "comply", "authorized"]
+        hits = sum(1 for kw in keywords if kw in text)
+        return min(1.0, hits * 0.35)
     
     def _regex_score(self, text: str, patterns: list[str]) -> float:
         hits = sum(1 for p in patterns if re.search(p, text, re.IGNORECASE))
-        return min(1.0, hits * 0.4)
+        return min(1.0, hits * 0.6)  # Boosted: single regex match = high confidence
     
     def _unicode_score(self, text: str) -> float:
         unusual = sum(1 for c in text if ord(c) > 0x2000 and ord(c) < 0xFFF0)
@@ -337,15 +340,20 @@ class AEGISCascadeSimulator:
     def _embedding_similarity_score(self, text: str) -> float:
         """Simulated embedding similarity to known attack vectors."""
         attack_phrases = ["ignore previous", "you are now", "act as", 
-                          "pretend to be", "bypass safety", "reveal system"]
+                          "pretend to be", "bypass safety", "reveal system",
+                          "system prompt", "no restrictions", "do anything",
+                          "forget your", "override", "hidden instructions",
+                          "educational purposes", "fictional world",
+                          "thought experiment", "grandmother", "hypothetically"]
         max_sim = 0.0
         for phrase in attack_phrases:
-            # Simple word overlap as proxy for embedding similarity
-            overlap = len(set(text.split()) & set(phrase.split()))
-            total = max(len(phrase.split()), 1)
+            phrase_words = set(phrase.split())
+            text_words = set(text.split())
+            overlap = len(text_words & phrase_words)
+            total = max(len(phrase_words), 1)
             sim = overlap / total
             max_sim = max(max_sim, sim)
-        return min(1.0, max_sim * 1.5)
+        return min(1.0, max_sim * 2.0)  # Boosted: partial matches count
     
     def _ngram_score(self, text: str) -> float:
         words = text.split()
